@@ -5,20 +5,19 @@ clear
 %shield divided by rm, a - power of the radial function in CLM vortex
 
 %bri = 15; bcu = 0.1;
-f = 8.7*10^(-5); z0 = 0; b=4; a = 2;
-H = 700; h = H/2; %nb = 40*f; 
-%vm = -1; rm = 10000; 
-vm = -1; rm = 11000;
+f = 1*10^(-4); z0 = 0; b=4; a = 2;
+H = 700; h = H/2; 
+vm = -1; rm = 25000;
 Lr = 7*rm; Lz = -2*H;
-nb1 = 250*f; nb = 50*f; pycw = 10; pycz = -10;
+nb = 50*f; bcu = 2*vm/(f*rm);
 
 %(rstart, zstart) - starting point of ray, t - maximum time to run
 %dt - timestep, Lr - radial extent of domain, Lz - vertical extent of the
 %domain, omega0 - frequency of the ray, m0 - initial vertical wavenumber
 %ch - characteristic to consider (1 or 2). 
-
-rstart = 1.3*rm; zstart = -0.03*H; t = 1*10^12; 
-omega0 = 0.9999*f; m0 = 1;
+niwdays = 10^5; ip = 2*pi/f; t = niwdays*ip;
+rstart = 1.3*rm; zstart = -0.03*H;
+omega0 = 0.9999*f; lambdaz = 100; m0 = 2*pi/lambdaz;
 
 
 %calculating the minimum frequency contours
@@ -34,24 +33,23 @@ end
 
 figobj=figure(1);
 hold on
-figobj.Position = [10 10 900 900];
+figobj.Position = [10 10 700 500];
 rmat = (1/100:1/100:Lr/rm)*rm; zmat = (-1/100:-1/100:Lz/H)*H;
 [X,Y] = meshgrid(rmat/rm,zmat/H);
 wmmat = wmin2; wmmat(imag(wmmat)~=0) = NaN;
 wmmatmin = (min(real(wmmat(:,1)/f))); disp(wmmatmin);
-%[C0,d0] = contour(X,Y,rhomat',15,'Color',[.7 .7 .7]);
+[C0,d0] = contour(X,Y,rhomat',15,'Color',[.7 .7 .7]);
 %hold on
 %d0.LineWidth = 1;
 [C,d] = contour(X,Y,real(wmmat)'/f,[wmmatmin, 0.9999, 0.9999],'k');
 d.LineWidth = 2;
-%[C,d] = contour(X,Y,real(wmmat)'/f,100);
 clabel(C,d); fontsize(25,"points");
-% [C,d] = contourf(X,Y,real(wmmat)'/f,100,'k');
 hold on
 [C,d] = contour(X,Y,real(wmin2.^2)',[0,  0],'b'); d.LineWidth = 1;
 xlabel("$r/r_m$"); ylabel("$z/H$");
-%title(['$Cu_b =$ ',num2str(bcu)]);
+title(['$Cu_b =$ ',num2str(bcu)]);
 xlim([0 5]); ylim([-2 0]);
+box on
 
 %%
 
@@ -196,39 +194,38 @@ xlim([0 5]); ylim([-2 0]);
 % xlim([0 5]); ylim([-2 0]);
 % fontsize(25,'points');
 
-figobj = figure(2);
-%figobj.Position = [10 10 900 900];
-[C,d] = contourf(X,Y,sqrt(n2'/f^2),100); set(d,'LineColor','None'); 
-colorbar; clim([min(min(sqrt(n2/f^2))),max(max(sqrt(n2/f^2)))]);
-hold on
-plot(r_ray1((imag(r_ray1)==0) & (sqrt(cgr_ray1.^2+cgz_ray1.^2)>1e-8) & (imag(cgr_ray1)==0) & (imag(cgz_ray1)==0))/rm,z_ray1((imag(z_ray1)==0) & (sqrt(cgr_ray1.^2+cgz_ray1.^2)>1e-8)& (imag(cgr_ray1)==0) & (imag(cgz_ray1)==0))/H,'r', 'LineWidth',2);
-hold on
-plot(r_ray2((imag(r_ray2)==0) & (sqrt(cgr_ray2.^2+cgz_ray2.^2)>1e-8)& (imag(cgr_ray2)==0) & (imag(cgz_ray2)==0))/rm,z_ray2((imag(z_ray2)==0) & (sqrt(cgr_ray2.^2+cgz_ray2.^2)>1e-8)& (imag(cgr_ray2)==0) & (imag(cgz_ray2)==0))/H,'g', 'LineWidth',2);
-hold on
-[C2,d2] = contour(X,Y,real(wmmat)'/f,[omega0/f, omega0/f],'k'); clabel(C2,d2); 
-fontsize(14,"points");
-[C3,d3] = contour(X,Y,real(wmin2.^2)',[0,  0],'b'); d3.LineWidth = 2;
-xlabel("$r/r_m$"); ylabel("$z/H$");
-%title('$Ri^{-1}$ ');
-xlim([0 5]); ylim([-2 0]);
-fontsize(25,'points');
+%figobj = figure(2);
+%[C,d] = contourf(X,Y,sqrt(n2'/f^2),100); set(d,'LineColor','None'); 
+%colorbar; clim([min(min(sqrt(n2/f^2))),max(max(sqrt(n2/f^2)))]);
+%hold on
+%plot(r_ray1((imag(r_ray1)==0) & (sqrt(cgr_ray1.^2+cgz_ray1.^2)>1e-8) & (imag(cgr_ray1)==0) & (imag(cgz_ray1)==0))/rm,z_ray1((imag(z_ray1)==0) & (sqrt(cgr_ray1.^2+cgz_ray1.^2)>1e-8)& (imag(cgr_ray1)==0) & (imag(cgz_ray1)==0))/H,'r', 'LineWidth',2);
+%hold on
+%plot(r_ray2((imag(r_ray2)==0) & (sqrt(cgr_ray2.^2+cgz_ray2.^2)>1e-8)& (imag(cgr_ray2)==0) & (imag(cgz_ray2)==0))/rm,z_ray2((imag(z_ray2)==0) & (sqrt(cgr_ray2.^2+cgz_ray2.^2)>1e-8)& (imag(cgr_ray2)==0) & (imag(cgz_ray2)==0))/H,'g', 'LineWidth',2);
+%hold on
+%[C2,d2] = contour(X,Y,real(wmmat)'/f,[omega0/f, omega0/f],'k'); clabel(C2,d2); 
+%fontsize(14,"points");
+%[C3,d3] = contour(X,Y,real(wmin2.^2)',[0,  0],'b'); d3.LineWidth = 2;
+%xlabel("$r/r_m$"); ylabel("$z/H$");
+%title('$N^2/f^2$ ');
+%xlim([0 5]); ylim([-2 0]);
+%fontsize(25,'points');
 
-figobj = figure(3);
+%figobj = figure(3);
 %figobj.Position = [10 10 900 900];
-[C,d] = contourf(X,Y,(xi2')/f^2,100); set(d,'LineColor','None'); 
-colorbar; clim([min(min(xi2/f^2)),1]);
-hold on
-plot(r_ray1((imag(r_ray1)==0) & (sqrt(cgr_ray1.^2+cgz_ray1.^2)>1e-8) & (imag(cgr_ray1)==0) & (imag(cgz_ray1)==0))/rm,z_ray1((imag(z_ray1)==0) & (sqrt(cgr_ray1.^2+cgz_ray1.^2)>1e-8)& (imag(cgr_ray1)==0) & (imag(cgz_ray1)==0))/H,'r', 'LineWidth',2);
-hold on
-plot(r_ray2((imag(r_ray2)==0) & (sqrt(cgr_ray2.^2+cgz_ray2.^2)>1e-8)& (imag(cgr_ray2)==0) & (imag(cgz_ray2)==0))/rm,z_ray2((imag(z_ray2)==0) & (sqrt(cgr_ray2.^2+cgz_ray2.^2)>1e-8)& (imag(cgr_ray2)==0) & (imag(cgz_ray2)==0))/H,'g', 'LineWidth',2);
-hold on
-[C2,d2] = contour(X,Y,real(wmmat)'/f,[omega0/f, omega0/f],'k'); clabel(C2,d2); 
-fontsize(14,"points");
-[C3,d3] = contour(X,Y,real(wmin2.^2)',[0,  0],'b'); d3.LineWidth = 2;
-xlabel("$r/r_m$"); ylabel("$z/H$");
+%[C,d] = contourf(X,Y,(xi2')/f^2,100); set(d,'LineColor','None'); 
+%colorbar; clim([min(min(xi2/f^2)),1]);
+%hold on
+%plot(r_ray1((imag(r_ray1)==0) & (sqrt(cgr_ray1.^2+cgz_ray1.^2)>1e-8) & (imag(cgr_ray1)==0) & (imag(cgz_ray1)==0))/rm,z_ray1((imag(z_ray1)==0) & (sqrt(cgr_ray1.^2+cgz_ray1.^2)>1e-8)& (imag(cgr_ray1)==0) & (imag(cgz_ray1)==0))/H,'r', 'LineWidth',2);
+%hold on
+%plot(r_ray2((imag(r_ray2)==0) & (sqrt(cgr_ray2.^2+cgz_ray2.^2)>1e-8)& (imag(cgr_ray2)==0) & (imag(cgz_ray2)==0))/rm,z_ray2((imag(z_ray2)==0) & (sqrt(cgr_ray2.^2+cgz_ray2.^2)>1e-8)& (imag(cgr_ray2)==0) & (imag(cgz_ray2)==0))/H,'g', 'LineWidth',2);
+%hold on
+%[C2,d2] = contour(X,Y,real(wmmat)'/f,[omega0/f, omega0/f],'k'); clabel(C2,d2); 
+%fontsize(14,"points");
+%[C3,d3] = contour(X,Y,real(wmin2.^2)',[0,  0],'b'); d3.LineWidth = 2;
+%xlabel("$r/r_m$"); ylabel("$z/H$");
 %title('$\chi^2/f^2$ ');
-xlim([0 5]); ylim([-2 0]);
-fontsize(25,'points');
+%xlim([0 5]); ylim([-2 0]);
+%fontsize(25,'points');
 
 % figobj = figure(3);
 % %figobj.Position = [10 10 900 900];
