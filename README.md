@@ -1,4 +1,4 @@
-There are three files in this repository. 
+There are three files in this repository plus some .fig files generating using maincode.m. 
 
 mainfreq_CLM.m is a Matlab function that evaluates the near-inertial wave minimum frequency expression for an idealized Gaussian shielded vortex.
 
